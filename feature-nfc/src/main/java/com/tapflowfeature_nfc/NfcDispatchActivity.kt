@@ -3,12 +3,14 @@ package com.tapflowfeature_nfc
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val TAG = "TapFlow-NFC"
 
 class NfcDispatchActivity : AppCompatActivity() {
+
+    private val viewModel: NfcViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleIntent(intent = intent)
@@ -30,6 +32,6 @@ class NfcDispatchActivity : AppCompatActivity() {
             "%02X".format(byte)
         }
 
-        Log.d(TAG, "NFC TAG DETECTED: $uid")
+        viewModel.onNfcTag(uid)
     }
 }

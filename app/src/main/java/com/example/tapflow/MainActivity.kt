@@ -14,8 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.tapflow.ui.theme.TapFlowTheme
+import com.tapflowfeature_nfc.NfcViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: NfcViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Button(
                             onClick = {
-                                DebugNfcSimulator.simulate("04:A2:9F:1C:88")
+                                viewModel.onNfcTag("04:A2:9F:1C:88")
                             }
                         ) {
                             Text("Teste NFC")

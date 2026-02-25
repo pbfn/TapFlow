@@ -44,6 +44,10 @@ dependencies {
     implementation(project(":feature-nfc"))
     implementation(libs.androidx.room.runtime)
 
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
