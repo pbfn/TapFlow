@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.tapflow.ui.theme.TapFlowTheme
+import com.tapflowfeature_nfc.NfcUiState
 import com.tapflowfeature_nfc.NfcViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -26,6 +29,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
+            val uiState by viewModel.uiState.collectAsState()
+
             TapFlowTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(
@@ -42,7 +48,21 @@ class MainActivity : ComponentActivity() {
                         ) {
                             Text("Teste NFC")
                         }
+                        when (uiState) {
+                            is NfcUiState.Loading -> {
+                                Text("Processando NFC...")
+                            }
 
+                            is NfcUiState.Success -> {
+                                Text("Tag lida com sucesso")
+                            }
+
+                            is NfcUiState.Error -> {
+                                Text("Erro ao ler tag")
+                            }
+
+                            else -> Unit
+                        }
                     }
                 }
             }
