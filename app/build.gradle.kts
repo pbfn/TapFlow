@@ -38,6 +38,12 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
+    implementation(project(":feature-nfc"))
+    implementation(libs.androidx.room.runtime)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -54,5 +60,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(project(":feature-nfc"))
 }

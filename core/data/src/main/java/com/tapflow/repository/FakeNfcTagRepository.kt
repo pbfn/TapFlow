@@ -1,8 +1,7 @@
-package com.tapflow.data.repository
+package com.tapflow.repository
 
 import android.util.Log
 import com.tapflow.model.NfcTag
-import com.tapflow.repository.NfcTagRepository
 
 private const val TAG = "TapFlow-FAKE-DB"
 class FakeNfcTagRepository: NfcTagRepository {
