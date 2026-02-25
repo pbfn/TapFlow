@@ -21,3 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "TapFlow"
 include(":app")
+include(":core:domain")
+include(":core:data")
+include(":core:common")
+include(":feature-nfc")
