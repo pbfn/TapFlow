@@ -7,7 +7,7 @@ import com.tapflow.local.entity.NfcTagEntity
 
 @Database(
     entities = [NfcTagEntity::class],
-    version = 1
+    version = 2
 )
 abstract class TapFlowDatabase : RoomDatabase() {
 

@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.tapflow.ui.theme.TapFlowTheme
-import com.tapflowfeature_nfc.NfcDispatchActivity
 import com.tapflowfeature_nfc.NfcUiState
 import com.tapflowfeature_nfc.NfcViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -38,10 +37,10 @@ class MainActivity : ComponentActivity() {
         pendingIntent = PendingIntent.getActivity(
             this,
             0,
-            Intent(this, NfcDispatchActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
             PendingIntent.FLAG_MUTABLE
         )
+
         enableEdgeToEdge()
         setContent {
 
@@ -68,8 +67,12 @@ class MainActivity : ComponentActivity() {
                                 Text("Processando NFC...")
                             }
 
-                            is NfcUiState.Success -> {
-                                Text("Tag lida com sucesso")
+                            is NfcUiState.NewTag -> {
+                                Text("Nova tag detectada! Configure ela.")
+                            }
+
+                            is NfcUiState.KnownTag -> {
+                                Text("Tag reconhecida: ${(uiState as NfcUiState.KnownTag).alias}")
                             }
 
                             is NfcUiState.Error -> {
@@ -97,5 +100,16 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         nfcAdapter.disableForegroundDispatch(this)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        if (intent?.action != NfcAdapter.ACTION_TAG_DISCOVERED) return
+
+        val tagId = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID) ?: return
+        val uid = tagId.joinToString(":") { "%02X".format(it) }
+
+        viewModel.onNfcTag(uid)
     }
 }

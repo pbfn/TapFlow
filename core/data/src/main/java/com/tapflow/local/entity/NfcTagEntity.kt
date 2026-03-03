@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class NfcTagEntity(
     @PrimaryKey
     val uid: String,
-    val alias: String?
+    val alias: String
 )

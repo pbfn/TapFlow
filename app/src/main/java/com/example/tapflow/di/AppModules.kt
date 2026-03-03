@@ -18,7 +18,9 @@ val appModules = module {
             androidContext(),
             TapFlowDatabase::class.java,
             "tapflow.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(true)
+            .build()
     }
 
     // DAO

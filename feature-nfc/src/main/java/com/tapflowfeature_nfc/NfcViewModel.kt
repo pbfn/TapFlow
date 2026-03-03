@@ -22,11 +22,19 @@ class NfcViewModel(
             _uiState.value = NfcUiState.Loading
 
             try {
-                withContext(Dispatchers.IO){
-                    handleNfcTagUseCase.execute(uid)
+                withContext(Dispatchers.IO) {
+                    val result = handleNfcTagUseCase.execute(uid)
                     delay(2000L)
+                    when (result) {
+                        is NfcTagResult.NewTag -> {
+                            _uiState.value = NfcUiState.NewTag(uid)
+                        }
+
+                        is NfcTagResult.ExistingTag -> {
+                            _uiState.value = NfcUiState.KnownTag(result.alias)
+                        }
+                    }
                 }
-                _uiState.value = NfcUiState.Success(uid)
             } catch (e: Exception) {
                 _uiState.value = NfcUiState.Error(
                     message = e.message ?: "Erro ao processar tag"

@@ -1,25 +1,26 @@
 package com.tapflow.usecase
 
+import NfcTagResult
 import com.tapflow.model.NfcTag
 import com.tapflow.repository.NfcTagRepository
 
 class HandleNfcTagUseCase(
     private val repository: NfcTagRepository
 ) {
-    fun execute(
-        uid: String
-    ) {
+    suspend fun execute(uid: String): NfcTagResult {
+
         val existing = repository.getByUid(uid)
 
-        if (existing == null) {
+        return if (existing == null) {
             repository.save(
                 NfcTag(
                     uid = uid,
                     alias = "Nova Tag"
                 )
             )
+            NfcTagResult.NewTag(uid)
         } else {
-            // no futuro: executar perfil
+            NfcTagResult.ExistingTag(uid, existing.alias)
         }
     }
 }
