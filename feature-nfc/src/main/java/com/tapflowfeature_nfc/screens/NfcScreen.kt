@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -13,7 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tapflowfeature_nfc.NfcUiState
+import com.tapflowfeature_nfc.NfcStatus
 import com.tapflowfeature_nfc.NfcViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -21,8 +20,7 @@ import org.koin.androidx.compose.koinViewModel
 fun NfcScreen(
     viewModel: NfcViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val history by viewModel.history.collectAsState()
+    val state by viewModel.screenState.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -30,33 +28,17 @@ fun NfcScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Button(onClick = {
-            viewModel.onNfcTag("04:A2:9F:1C:88")
-        }) {
-            Text("Simular NFC")
+        when (val status = state.status) {
+            is NfcStatus.Loading -> Text("Processando...")
+            is NfcStatus.NewTag -> Text("Nova tag!")
+            is NfcStatus.KnownTag -> Text("Tag conhecida: ${status.alias}")
+            is NfcStatus.Error -> Text("Erro: ${status.message}")
+            NfcStatus.Idle -> Unit
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        when (uiState) {
-            is NfcUiState.Loading -> {
-                Text("Processando NFC...")
-            }
-            is NfcUiState.NewTag -> {
-                Text("Nova tag detectada!")
-            }
-            is NfcUiState.KnownTag -> {
-                Text("Tag conhecida!")
-            }
-            is NfcUiState.Error -> {
-                Text("Erro ao ler tag")
-            }
-            else -> Unit
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        history.forEach {
+        state.history.forEach {
             Text("UID: ${it.uid}")
         }
     }

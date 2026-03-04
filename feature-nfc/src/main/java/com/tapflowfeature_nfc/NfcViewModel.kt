@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,20 +22,26 @@ class NfcViewModel(
     private val observeNfcHistoryUseCase: ObserveNfcHistoryUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<NfcUiState>(NfcUiState.Idle)
-    val uiState: StateFlow<NfcUiState> = _uiState
+    private val _status = MutableStateFlow<NfcStatus>(NfcStatus.Idle)
 
-    val history: StateFlow<List<NfcReadHistory>> =
-        observeNfcHistoryUseCase.execute()
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
+    val screenState: StateFlow<NfcScreenState> =
+        combine(
+            observeNfcHistoryUseCase.execute(),
+            _status
+        ) { history, status ->
+            NfcScreenState(
+                history = history,
+                status = status
             )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = NfcScreenState()
+        )
 
     fun onNfcTag(uid: String) {
         viewModelScope.launch {
-            _uiState.value = NfcUiState.Loading
+            _status.value = NfcStatus.Loading
 
             try {
                 val result = withContext(Dispatchers.IO) {
@@ -45,23 +52,19 @@ class NfcViewModel(
                     registerNfcReadUseCase.execute(uid)
                 }
 
-                when (result) {
+                _status.value = when (result) {
                     is NfcTagResult.NewTag ->
-                        _uiState.value = NfcUiState.NewTag(uid)
+                        NfcStatus.NewTag(uid)
 
                     is NfcTagResult.ExistingTag ->
-                        _uiState.value = NfcUiState.KnownTag(result.alias)
+                        NfcStatus.KnownTag(result.alias)
                 }
 
             } catch (e: Exception) {
-                _uiState.value = NfcUiState.Error(
+                _status.value = NfcStatus.Error(
                     e.message ?: "Erro ao processar tag"
                 )
             }
         }
-    }
-
-    fun resetState() {
-        _uiState.value = NfcUiState.Idle
     }
 }
