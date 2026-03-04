@@ -1,6 +1,6 @@
 package com.tapflow.usecase
 
-import NfcTagResult
+import com.tapflow.NfcTagResult
 import com.tapflow.model.NfcTag
 import com.tapflow.repository.NfcTagRepository
 

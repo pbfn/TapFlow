@@ -7,22 +7,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.example.tapflow.ui.theme.TapFlowTheme
-import com.tapflowfeature_nfc.NfcUiState
 import com.tapflowfeature_nfc.NfcViewModel
+import com.tapflowfeature_nfc.screens.NfcScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
 
@@ -43,46 +31,8 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-
-            val uiState by viewModel.uiState.collectAsState()
-
             TapFlowTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Button(
-                            onClick = {
-                                viewModel.onNfcTag("04:A2:9F:1C:88")
-                            }
-                        ) {
-                            Text("Teste NFC")
-                        }
-                        when (uiState) {
-                            is NfcUiState.Loading -> {
-                                Text("Processando NFC...")
-                            }
-
-                            is NfcUiState.NewTag -> {
-                                Text("Nova tag detectada! Configure ela.")
-                            }
-
-                            is NfcUiState.KnownTag -> {
-                                Text("Tag reconhecida: ${(uiState as NfcUiState.KnownTag).alias}")
-                            }
-
-                            is NfcUiState.Error -> {
-                                Text("Erro ao ler tag")
-                            }
-
-                            else -> Unit
-                        }
-                    }
-                }
+                NfcScreen()
             }
         }
     }
