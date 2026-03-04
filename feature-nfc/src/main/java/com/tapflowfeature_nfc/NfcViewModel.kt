@@ -4,34 +4,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tapflow.NfcTagResult
 import com.tapflow.model.NfcReadHistory
-import com.tapflow.usecase.GetNfcHistoryUseCase
+import com.tapflow.usecase.ObserveNfcHistoryUseCase
 import com.tapflow.usecase.HandleNfcTagUseCase
 import com.tapflow.usecase.RegisterNfcReadUseCase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NfcViewModel(
     private val handleNfcTagUseCase: HandleNfcTagUseCase,
     private val registerNfcReadUseCase: RegisterNfcReadUseCase,
-    private val getNfcHistoryUseCase: GetNfcHistoryUseCase
+    private val observeNfcHistoryUseCase: ObserveNfcHistoryUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<NfcUiState>(NfcUiState.Idle)
     val uiState: StateFlow<NfcUiState> = _uiState
 
-    private val _history =
-        MutableStateFlow<List<NfcReadHistory>>(emptyList())
-    val history: StateFlow<List<NfcReadHistory>> = _history
-
-    init {
-        viewModelScope.launch {
-            _history.value = getNfcHistoryUseCase.execute()
-        }
-    }
+    val history: StateFlow<List<NfcReadHistory>> =
+        observeNfcHistoryUseCase.execute()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
 
     fun onNfcTag(uid: String) {
         viewModelScope.launch {
@@ -44,7 +43,6 @@ class NfcViewModel(
 
                 withContext(Dispatchers.IO) {
                     registerNfcReadUseCase.execute(uid)
-                    _history.value = getNfcHistoryUseCase.execute()
                 }
 
                 when (result) {

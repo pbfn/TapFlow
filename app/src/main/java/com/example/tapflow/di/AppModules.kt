@@ -6,7 +6,7 @@ import com.tapflow.repository.NfcReadHistoryRepository
 import com.tapflow.repository.NfcReadHistoryRepositoryImpl
 import com.tapflow.repository.NfcTagRepository
 import com.tapflow.repository.NfcTagRepositoryImpl
-import com.tapflow.usecase.GetNfcHistoryUseCase
+import com.tapflow.usecase.ObserveNfcHistoryUseCase
 import com.tapflow.usecase.HandleNfcTagUseCase
 import com.tapflow.usecase.RegisterNfcReadUseCase
 import com.tapflowfeature_nfc.NfcViewModel
@@ -45,7 +45,7 @@ val appModules = module {
         HandleNfcTagUseCase(get())
     }
     factory { RegisterNfcReadUseCase(get()) }
-    factory { GetNfcHistoryUseCase(get()) }
+    factory { ObserveNfcHistoryUseCase(get()) }
 
     // ViewModel
     viewModel {

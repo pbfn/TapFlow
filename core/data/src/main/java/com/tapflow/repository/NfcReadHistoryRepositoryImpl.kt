@@ -4,6 +4,8 @@ import com.tapflow.local.dao.NfcReadHistoryDao
 import com.tapflow.mapper.toDomain
 import com.tapflow.mapper.toEntity
 import com.tapflow.model.NfcReadHistory
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class NfcReadHistoryRepositoryImpl(
     private val dao: NfcReadHistoryDao
@@ -13,7 +15,8 @@ class NfcReadHistoryRepositoryImpl(
         dao.insert(history.toEntity())
     }
 
-    override suspend fun getAll(): List<NfcReadHistory> {
-        return dao.getAll().map { it.toDomain() }
+    override fun observeAll(): Flow<List<NfcReadHistory>> {
+        return dao.observeAll()
+            .map { list -> list.map { it.toDomain() } }
     }
 }

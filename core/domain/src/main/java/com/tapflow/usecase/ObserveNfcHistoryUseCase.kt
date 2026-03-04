@@ -2,11 +2,12 @@ package com.tapflow.usecase
 
 import com.tapflow.model.NfcReadHistory
 import com.tapflow.repository.NfcReadHistoryRepository
+import kotlinx.coroutines.flow.Flow
 
-class GetNfcHistoryUseCase(
+class ObserveNfcHistoryUseCase(
     private val repository: NfcReadHistoryRepository
 ) {
-    suspend fun execute(): List<NfcReadHistory> {
-        return repository.getAll()
+    fun execute(): Flow<List<NfcReadHistory>> {
+        return repository.observeAll()
     }
 }

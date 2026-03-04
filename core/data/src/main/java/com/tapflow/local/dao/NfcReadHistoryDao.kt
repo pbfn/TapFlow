@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.tapflow.local.entity.NfcReadHistoryEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NfcReadHistoryDao {
@@ -12,5 +13,5 @@ interface NfcReadHistoryDao {
     suspend fun insert(history: NfcReadHistoryEntity)
 
     @Query("SELECT * FROM nfc_read_history ORDER BY timestamp DESC")
-    suspend fun getAll(): List<NfcReadHistoryEntity>
+    fun observeAll(): Flow<List<NfcReadHistoryEntity>>
 }
