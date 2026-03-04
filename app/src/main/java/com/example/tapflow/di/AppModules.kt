@@ -6,6 +6,9 @@ import com.tapflow.repository.NfcReadHistoryRepository
 import com.tapflow.repository.NfcReadHistoryRepositoryImpl
 import com.tapflow.repository.NfcTagRepository
 import com.tapflow.repository.NfcTagRepositoryImpl
+import com.tapflow.repository.TagActionRepository
+import com.tapflow.repository.TagActionRepositoryImpl
+import com.tapflow.usecase.GetTagActionUseCase
 import com.tapflow.usecase.ObserveNfcHistoryUseCase
 import com.tapflow.usecase.HandleNfcTagUseCase
 import com.tapflow.usecase.ProcessNfcTagUseCase
@@ -31,6 +34,7 @@ val appModules = module {
     // DAO
     single { get<TapFlowDatabase>().nfcTagDao() }
     single { get<TapFlowDatabase>().nfcReadHistoryDao() }
+    single { get<TapFlowDatabase>().tagActionDao() }
 
     // Repository
     single<NfcTagRepository> {
@@ -41,6 +45,10 @@ val appModules = module {
         NfcReadHistoryRepositoryImpl(get())
     }
 
+    single<TagActionRepository> {
+        TagActionRepositoryImpl(get())
+    }
+
     // UseCase
     factory {
         HandleNfcTagUseCase(get())
@@ -48,6 +56,7 @@ val appModules = module {
     factory { RegisterNfcReadUseCase(get()) }
     factory { ObserveNfcHistoryUseCase(get()) }
     factory { ProcessNfcTagUseCase(get(), get()) }
+    factory { GetTagActionUseCase(get()) }
 
     // ViewModel
     viewModel {
