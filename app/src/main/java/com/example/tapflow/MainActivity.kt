@@ -8,7 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.tapflow.ui.theme.TapFlowTheme
-import com.tapflowfeature_nfc.NfcViewModel
+import com.tapflowfeature_nfc.mvi.NfcIntent
+import com.tapflowfeature_nfc.mvi.NfcViewModel
 import com.tapflowfeature_nfc.screens.NfcScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
         val tagId = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID) ?: return
         val uid = tagId.joinToString(":") { "%02X".format(it) }
 
-        viewModel.onNfcTag(uid)
+
+        viewModel.handleIntent(NfcIntent.TagScanned(uid))
     }
 }
