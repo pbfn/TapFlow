@@ -3,10 +3,8 @@ package com.tapflowfeature_nfc.mvi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tapflow.NfcTagResult
-import com.tapflow.usecase.HandleNfcTagUseCase
 import com.tapflow.usecase.ObserveNfcHistoryUseCase
 import com.tapflow.usecase.ProcessNfcTagUseCase
-import com.tapflow.usecase.RegisterNfcReadUseCase
 import com.tapflowfeature_nfc.NfcStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,8 +13,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -27,11 +25,14 @@ class NfcViewModel(
 
 
     private val _events = MutableSharedFlow<NfcEvent>(
-        extraBufferCapacity = 1
+        replay = 0,
+        extraBufferCapacity = 5
     )
     val events = _events.asSharedFlow()
 
     private val _status = MutableStateFlow<NfcStatus>(NfcStatus.Idle)
+
+    private var lastTagReadTime = 0L
 
     val screenState: StateFlow<NfcScreenState> =
         combine(
@@ -72,6 +73,12 @@ class NfcViewModel(
     }
 
     private fun processTag(uid: String) {
+
+        val now = System.currentTimeMillis()
+
+        if (now - lastTagReadTime < 1500) return
+
+        lastTagReadTime = now
 
         viewModelScope.launch {
 

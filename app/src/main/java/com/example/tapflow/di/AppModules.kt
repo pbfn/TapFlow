@@ -13,6 +13,8 @@ import com.tapflow.usecase.ObserveNfcHistoryUseCase
 import com.tapflow.usecase.HandleNfcTagUseCase
 import com.tapflow.usecase.ProcessNfcTagUseCase
 import com.tapflow.usecase.RegisterNfcReadUseCase
+import com.tapflow.usecase.SaveTagActionUseCase
+import com.tapflowfeature_nfc.ConfigureTagViewModel
 import com.tapflowfeature_nfc.mvi.NfcViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -57,9 +59,13 @@ val appModules = module {
     factory { ObserveNfcHistoryUseCase(get()) }
     factory { ProcessNfcTagUseCase(get(), get()) }
     factory { GetTagActionUseCase(get()) }
+    factory { SaveTagActionUseCase(get()) }
 
     // ViewModel
     viewModel {
         NfcViewModel(get(), get())
+    }
+    viewModel {
+        ConfigureTagViewModel(get())
     }
 }

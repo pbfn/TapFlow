@@ -15,7 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: NfcViewModel by viewModel()
+    private val nfcViewModel: NfcViewModel by viewModel()
     private lateinit var nfcAdapter: NfcAdapter
     private lateinit var pendingIntent: PendingIntent
 
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TapFlowTheme {
-                AppNavigation()
+                AppNavigation(nfcViewModel)
             }
         }
     }
@@ -62,6 +62,6 @@ class MainActivity : ComponentActivity() {
         val uid = tagId.joinToString(":") { "%02X".format(it) }
 
 
-        viewModel.handleIntent(NfcIntent.TagScanned(uid))
+        nfcViewModel.handleIntent(NfcIntent.TagScanned(uid))
     }
 }

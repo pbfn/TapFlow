@@ -16,7 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.tapflowfeature_nfc.NfcStatus
 import com.tapflowfeature_nfc.mvi.NfcEvent
 import com.tapflowfeature_nfc.mvi.NfcIntent
@@ -27,23 +30,30 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NfcScreen(
     onNavigateToTagConfig: (String) -> Unit,
-    viewModel: NfcViewModel = koinViewModel()
+    viewModel: NfcViewModel
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is NfcEvent.ShowToast ->
-                    Toast.makeText(
-                        context,
-                        event.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+    LaunchedEffect(lifecycle) {
 
-                is NfcEvent.NavigateToTagConfig -> {
-                    onNavigateToTagConfig(event.uid)
+        lifecycle.repeatOnLifecycle(
+            Lifecycle.State.STARTED
+        ) {
+            viewModel.events.collect { event ->
+                when (event) {
+                    is NfcEvent.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            event.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is NfcEvent.NavigateToTagConfig -> {
+                        onNavigateToTagConfig(event.uid)
+                    }
                 }
             }
         }

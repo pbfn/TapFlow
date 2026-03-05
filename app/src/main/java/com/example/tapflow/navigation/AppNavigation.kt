@@ -4,11 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.tapflowfeature_nfc.mvi.NfcViewModel
 import com.tapflowfeature_nfc.screens.ConfigureTagScreen
 import com.tapflowfeature_nfc.screens.NfcScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    nfcViewModel: NfcViewModel
+) {
 
     val navController = rememberNavController()
 
@@ -20,6 +23,7 @@ fun AppNavigation() {
         composable(AppRoute.Nfc.route) {
 
             NfcScreen(
+                viewModel = nfcViewModel,
                 onNavigateToTagConfig = { uid ->
                     navController.navigate(
                         AppRoute.ConfigureTag.create(uid)
