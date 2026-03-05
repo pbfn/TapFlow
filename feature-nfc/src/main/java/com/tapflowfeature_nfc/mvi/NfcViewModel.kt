@@ -91,6 +91,10 @@ class NfcViewModel(
                 reduce(status)
                 sendEvent(NfcEvent.ShowToast("Tag lida!"))
 
+                if (result is NfcTagResult.NewTag) {
+                    sendEvent(NfcEvent.NavigateToTagConfig(uid))
+                }
+
             } catch (e: Exception) {
                 reduce(
                     NfcStatus.Error(

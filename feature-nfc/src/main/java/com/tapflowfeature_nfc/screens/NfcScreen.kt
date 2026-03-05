@@ -6,15 +6,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tapflowfeature_nfc.NfcStatus
 import com.tapflowfeature_nfc.mvi.NfcEvent
 import com.tapflowfeature_nfc.mvi.NfcIntent
@@ -24,9 +26,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NfcScreen(
+    onNavigateToTagConfig: (String) -> Unit,
     viewModel: NfcViewModel = koinViewModel()
 ) {
-    val state by viewModel.screenState.collectAsState()
+    val state by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -39,8 +42,8 @@ fun NfcScreen(
                         Toast.LENGTH_SHORT
                     ).show()
 
-                NfcEvent.NavigateToConfig -> {
-                    // futura navegação
+                is NfcEvent.NavigateToTagConfig -> {
+                    onNavigateToTagConfig(event.uid)
                 }
             }
         }
@@ -48,14 +51,13 @@ fun NfcScreen(
 
     LaunchedEffect(state.status) {
 
-        if (state.status is NfcStatus.NewTag) {
+        if (state.status !is NfcStatus.NewTag) return@LaunchedEffect
 
-            delay(2000)
+        delay(2000)
 
-            viewModel.handleIntent(
-                NfcIntent.ResetStatus
-            )
-        }
+        viewModel.handleIntent(
+            NfcIntent.ResetStatus
+        )
     }
 
     Column(
@@ -74,8 +76,10 @@ fun NfcScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        state.history.forEach {
-            Text("UID: ${it.uid}")
+        LazyColumn {
+            items(state.history) {
+                Text("UID: ${it.uid}")
+            }
         }
     }
 }

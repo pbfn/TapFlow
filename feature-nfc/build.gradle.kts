@@ -62,4 +62,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.koin.android)
+
+    implementation(libs.androidx.lifecycle.runtime.compose)
 }
