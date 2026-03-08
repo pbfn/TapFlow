@@ -21,3 +21,9 @@ subprojects {
         add("detektPlugins", "io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
     }
 }
+
+tasks.register("runDesktop") {
+    group = "application"
+    description = "Executa o app desktop do módulo Compose Multiplatform"
+    dependsOn(":composeApp:run")
+}
