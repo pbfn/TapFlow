@@ -22,6 +22,7 @@ roomRuntime = "2.8.4"
 runtime = "1.10.4"
 detekt = "1.23.8"
 navigationCompose = "2.7.7"
+composeMultiplatform = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +56,8 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
